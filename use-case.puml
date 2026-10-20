@@ -1,0 +1,89 @@
+@startuml
+left to right direction
+
+' --- Жалпы стильдер мен түстер ---
+skinparam actor {
+    BorderColor Black
+    BackgroundColor<<ClientStyle>> #E8F1F5
+    BackgroundColor<<AdminStyle>> #E2F0D9
+    BackgroundColor<<ManagerStyle>> #FCE4D6
+    BackgroundColor<<CourierStyle>> #FFF2CC
+    BackgroundColor<<PaymentStyle>> #F2F2F2
+}
+
+skinparam usecase {
+    BorderColor DarkSlateGray
+    ArrowColor #595959
+}
+
+' --- Актерлерді жариялау және оларға түс беру ---
+actor "Клиент" as Client <<ClientStyle>> #LightBlue
+actor "Әкімші" as Admin <<AdminStyle>> #LightGreen
+actor "Менеджер" as Manager <<ManagerStyle>> #Bisque
+actor "Курьер" as Courier <<CourierStyle>> #LightYellow
+actor "Төлем жүйесі" as PaymentSystem <<PaymentStyle>> #LightGray
+
+rectangle "Интернет-дүкен ақпараттық жүйесі" {
+    ' Клиенттің прецеденттері (Көкшіл / LightBlue)
+    usecase "Тіркелу" as UC1 #E8F1F5
+    usecase "Жүйеге кіру" as UC2 #E8F1F5
+    usecase "Тауарды іздеу" as UC3 #E8F1F5
+    usecase "Тауар ақпаратын көру" as UC4 #E8F1F5
+    usecase "Себетке тауар қосу" as UC5 #E8F1F5
+    usecase "Тапсырыс рәсімдеу" as UC6 #E8F1F5
+    usecase "Тапсырыс мәртебесін бақылау" as UC7 #E8F1F5
+    
+    ' Арнайы байланысқан прецеденттер (Күлгін және Қызғылт)
+    usecase "Төлем жасау" as UC8 #E1D5E7
+    usecase "Хабарлама\n(Email/SMS)" as UC9 #E1D5E7
+    
+    ' Әкімшінің прецеденттері (Жасыл / LightGreen)
+    usecase "Тауарларды басқару" as UC10 #E2F0D9
+    usecase "Тапсырыстарды басқару" as UC11 #E2F0D9
+
+    ' Менеджердің прецеденттері (Қызғылт сары / LightOrange)
+    usecase "Тапсырысты өңдеу" as UC12 #FCE4D6
+    usecase "Тапсырыс мәртебесін\nөзгерту" as UC13 #FCE4D6
+
+    ' Курьердің прецеденттері (Сары / LightYellow)
+    usecase "Тапсырысты жеткізу" as UC14 #FFF2CC
+    usecase "Жеткізу мәртебесін\nжаңарту" as UC15 #FFF2CC
+
+    ' Төлем жүйесінің прецеденті (Қызыл / LightRed)
+    usecase "Төлемді растау" as UC16 #F8CECC
+}
+
+' --- Клиент байланыстары ---
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
+
+' --- Ішкі маңызды байланыстар (стрелка бағыттары үлгі бойынша түзетілді) ---
+UC6 .> UC8 : <<include>>
+UC9 .> UC6 : <<extend>>
+UC7 .> UC9 : <<extend>>
+
+' --- Әкімші байланыстары ---
+Admin --> UC2
+Admin --> UC10
+Admin --> UC11
+
+' --- Менеджер байланыстары ---
+Manager --> UC2
+Manager --> UC12
+UC12 .> UC13 : <<include>>
+
+' --- Курьер байланыстары ---
+Courier --> UC2
+Courier --> UC14
+UC14 .> UC15 : <<include>>
+
+' --- Төлем жүйесі мен Төлем жасау байланыстары ---
+UC8 --> PaymentSystem
+PaymentSystem --> UC16
+
+@enduml 

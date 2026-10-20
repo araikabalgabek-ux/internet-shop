@@ -1,0 +1,62 @@
+@startuml
+' --- Жалпы стильдер мен түстерді теңшеу ---
+autonumber "<b>0.</b> "
+skinparam RoundCorner 5
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+skinparam Actor {
+    BorderColor #A0A0A0
+    BackgroundColor #FCE4D6
+}
+
+skinparam Participant {
+    BorderColor #7F7F7F
+    BackgroundColor #F2F2F2
+}
+
+' --- Қатысушыларды (компоненттерді) жариялау ---
+actor "Клиент" as Client #F8CECC
+participant "ВебИнтерфейс" as Web #E1D5E7
+participant "OrderService(Тапсырыс қызметі)" as OrderService #FCE4D6
+participant "Дерекқор" as DB #DEEAF6
+participant "ТөлемЖүйесі" as Payment #E2F0D9
+
+' --- Диаграмманың басы (Процесс ағыны) ---
+activate Client
+Client -> Web : Тауарды таңдау
+activate Web
+
+Web -> OrderService : Тауарды сұрау
+activate OrderService
+
+OrderService -> DB : Тауарларды алу
+activate DB
+OrderService <-- DB : Тауар дерегі
+deactivate DB
+
+Web <-- OrderService : Тауар ақпаратын көрсету
+deactivate OrderService
+
+Client -> Web : Себетке қосу, төлем жасау
+Web -> OrderService : Төлемді растау
+activate OrderService
+
+OrderService -> Payment : Жаңа төлем жіберу
+activate Payment
+OrderService <-- Payment : Төлем қабылданды
+deactivate Payment
+
+OrderService -> DB : Тапсырысты сақтау
+activate DB
+OrderService <-- DB : Order_ID
+deactivate DB
+
+Web <-- OrderService : Тапсырыс қабылданды
+deactivate OrderService
+
+Client <-- Web : Тапсырыс қабылданды
+deactivate Web
+deactivate Client
+
+@enduml
