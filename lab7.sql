@@ -23,12 +23,6 @@ SELECT name, price FROM products ORDER BY price DESC;
 SELECT '--- 6. GROUP BY арқылы мәліметтерді топтау ---' AS '';
 SELECT status, COUNT(id) AS 'Тапсырыс саны' FROM deliveries GROUP BY status;
 
-SELECT '--- 7. Агрегаттық функцияларды қолдану (SUM, AVG, MAX, MIN) ---' AS '';
-SELECT 
-    MAX(price) AS 'Ең қымбат тауар', 
-    MIN(price) AS 'Ең арзан тауар', 
-    AVG(price) AS 'Орташа баға' 
-FROM products;
 
 SELECT '--- 8. HAVING арқылы топталған нәтижелерді сүзгілеу ---' AS '';
 SELECT user_id, SUM(total_amount) AS 'Жалпы сомасы' FROM orders GROUP BY user_id HAVING SUM(total_amount) > 500000;
@@ -52,3 +46,6 @@ SELECT DISTINCT status AS 'Қолданыстағы статустар' FROM ord
 
 SELECT '--- АНАЛИТИКА 5: Жалпы тапсырыс сомасы 450,000-нан асатын пайдаланушыларды табу ---' AS '';
 SELECT user_id, SUM(total_amount) AS 'Жалпы сомасы' FROM orders GROUP BY user_id HAVING SUM(total_amount) > 450000;
+SELECT '--- 7. Агрегаттық функцияларды қолдану (SUM, AVG, MAX, MIN) ---' AS '';
+SELECT MAX(price) AS 'Ең қымбат тауар',  
+FROM products;

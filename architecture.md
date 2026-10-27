@@ -2,58 +2,42 @@
 
 ```mermaid
 graph TD
-    classDef actorStyle fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef presentation fill:#bbf,stroke:#333,stroke-width:2px;
-    classDef logic fill:#f96,stroke:#333,stroke-width:2px;
-    classDef access fill:#ff9,stroke:#333,stroke-width:2px;
-    classDef database fill:#6c6,stroke:#333,stroke-width:2px;
+    %% Стили для красивого отображения (как в методичке)
+    classDef layerStyle fill:#ffffff,stroke:#cccccc,stroke-width:1px,rx:5px,ry:5px;
+    classDef dbStyle fill:#f5f5f5,stroke:#cccccc,stroke-width:1px,rx:5px,ry:5px;
 
-    subgraph Presentation_Layer [1. Презентация деңгейі]
-        Customer[👤 Сатып алушы / Актер]:::actorStyle
-        Admin[👮 Әкімші / Актер]:::actorStyle
-        UI[💻 Пайдаланушы интерфейсі <br> Веб-сайт, Формалар, Мобильді қосымша]:::presentation
+    %% 1. Презентация деңгейі
+    subgraph Layer1 [1. Пайдаланушы интерфейсі]
+        UI_Desc["🛒 Интернет-дүкен веб-сайты мен мобильді қосымшасы <br> (Сатып алушы • Әкімші)"]
     end
+    style Layer1 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
-    subgraph Application_Layer [2. Қолданбалы логика деңгейі]
-        Auth[🔐 Авторизация модулі <br> Тіркелу және жүйеге кіру]:::logic
-        Catalog[🛍️ Тауарлар каталогы <br> Іздеу, сүзгілеу, тауар көру]:::logic
-        Cart[🛒 Тапсырыс搬 беру модулі <br> Себетпен жұмыс және төлем]:::logic
-        AdminPanel[📊 Басқару модулі <br> Тауар қосу, тапсырыстарды көру]:::logic
-        Notify[🔔 Хабарландыру қызметі <br> SMS/Email жіберу]:::logic
+    %% 2. Қолданбалы логика деңгейі
+    subgraph Layer2 [2. Қолданбалы логика]
+        Logic_Desc["🔐 Авторизация • 🛍️ Тауарлар каталогы мен іздеу <br> 🛒 Себет және тапсырыстарды рәсімдеу"]
     end
+    style Layer2 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
-    subgraph Data_Layer [3. Деректер деңгейі]
-        DAC[🔄 Деректерге қол жеткізу компоненті <br> SQL сұраныстарды қалыптастыру]:::access
-        DB[(🗄️ Реляциялық Дерекқор <br> Users, Products, Orders)]:::database
+    %% 3. Деректерге қол жеткізу деңгейі
+    subgraph Layer3 [3. Деректерге қол жеткізу]
+        DAC_Desc["🔄 Сұраныстарды өңдеу және деректерді сақтау операциялары (DAC)"]
     end
+    style Layer3 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
-    Customer -->|1. Сайтқа кіреді / Тауар таңдайды| UI
-    UI -->|2. Жүйеге кіру сұранысы| Auth
-    UI -->|2. Іздеу өрісінен тауар іздейді| Catalog
-    UI -->|2. Тапсырысты рәсімдейді| Cart
-    
-    Admin -->|1. Панельге кіреді / Тауар қосады| UI
-    UI -->|2. Басқару сұранысын жолдайды| AdminPanel
+    %% 4. Дерекқор деңгейі
+    subgraph Layer4 [🗄️ Дерекқор]
+        DB_Desc["🗄️ Реляциялық дерекқор <br> (Users • Products • Orders • Cart)"]
+    end
+    style Layer4 fill:#f5f5f5,stroke:#333333,stroke-width:1px;
 
-    Auth -->|3. Деректерді өңдеуге бағыттайды| DAC
-    Catalog -->|3. Сұранысты жолдайды| DAC
-    Cart -->|3. Тапсырыс мәліметін жібереді| DAC
-    AdminPanel -->|3. Жаңа тауар мәліметін жібереді| DAC
-    
-    Cart -.->|Хабарлама жіберу сұранысы| Notify
-    
-    DAC -->|4. Data Query / Деректерді алу| DB
-    DB -->|5. Data Response / Жауап қайтару| DAC
-    
-    DAC -->|6. Нәтижені өңдеуге береді| Auth
-    DAC -->|6. Нәтижені өңдеуге береді| Catalog
-    DAC -->|6. Нәтижені өңдеуге береді| Cart
-    DAC -->|6. Нәтижені өңдеуге береді| AdminPanel
-    
-    Catalog -->|7. HTTP Response / Тауарлар тізімі| UI
-    Cart -->|7. HTTP Response / Тапсырыс мәртебесі| UI
-    AdminPanel -->|7. HTTP Response / Жаңартылған тауарлар| UI
-    
-    UI -->|8. Тауарды / Тапсырыс сәтті өткенін көреді| Customer
-    UI -->|8. Тауар сәтті қосылғанын көреді| Admin
+    %% Прямой поток данных (Сверху вниз)
+    Layer1 -->|HTTP Request / Сұраныс жолдау| Layer2
+    Layer2 -->|Бизнес-логиканы орындау| Layer3
+    Layer3 -->|Data Query / SQL сұраныс| Layer4
+
+    %% Обратный поток данных (Снизу вверх)
+    Layer4 -.->|Data Response / Жауап қайтару| Layer3
+    Layer3 -.->|Өңделген мәліметтер| Layer2
+    Layer2 -.->|HTTP Response / Нәтижені көрсету| Layer1
 ```
+
