@@ -2,42 +2,78 @@
 
 ```mermaid
 graph TD
-    %% Стили для красивого отображения (как в методичке)
-    classDef layerStyle fill:#ffffff,stroke:#cccccc,stroke-width:1px,rx:5px,ry:5px;
-    classDef dbStyle fill:#f5f5f5,stroke:#cccccc,stroke-width:1px,rx:5px,ry:5px;
+    %% Стильдер
+    classDef actorStyle fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef presentation fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef logic fill:#f96,stroke:#333,stroke-width:2px;
+    classDef access fill:#ff9,stroke:#333,stroke-width:2px;
+    classDef database fill:#6c6,stroke:#333,stroke-width:2px;
 
     %% 1. Презентация деңгейі
-    subgraph Layer1 [1. Пайдаланушы интерфейсі]
-        UI_Desc["🛒 Интернет-дүкен веб-сайты мен мобильді қосымшасы <br> (Сатып алушы • Әкімші)"]
+    subgraph Presentation_Layer [1. Презентация деңгейі]
+        Customer[👤 Сатып алушы / Актер]:::actorStyle
+        Admin[👮 Әкімші / Актер]:::actorStyle
+        UI[💻 Пайдаланушы интерфейсі <br> Веб-сайт, Формалар, Мобильді қосымша]:::presentation
     end
-    style Layer1 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
     %% 2. Қолданбалы логика деңгейі
-    subgraph Layer2 [2. Қолданбалы логика]
-        Logic_Desc["🔐 Авторизация • 🛍️ Тауарлар каталогы мен іздеу <br> 🛒 Себет және тапсырыстарды рәсімдеу"]
+    subgraph Application_Layer [2. Қолданбалы логика деңгейі]
+        Auth[🔐 Авторизация модулі]:::logic
+        Catalog[🛍️ Тауарлар каталогы]:::logic
+        Cart[🛒 Тапсырыс беру модулі]:::logic
+        AdminPanel[📊 Басқару модулі]:::logic
+        Notify[🔔 Хабарландыру қызметі]:::logic
     end
-    style Layer2 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
-    %% 3. Деректерге қол жеткізу деңгейі
-    subgraph Layer3 [3. Деректерге қол жеткізу]
-        DAC_Desc["🔄 Сұраныстарды өңдеу және деректерді сақтау операциялары (DAC)"]
+    %% 3. Деректер деңгейі
+    subgraph Data_Layer [3. Деректер деңгейі]
+        DAC[🔄 Деректерге қол жеткізу компоненті]:::access
+        
+        %% Реляциялық дерекқор құрылымы
+        T_Users["🗄️ Users кестесі <br> (Логин, Пароль, Рөл)"]:::database
+        T_Products["🗄️ Products кестесі <br> (Атауы, Бағасы, Саны)"]:::database
+        T_Orders["🗄️ Orders кестесі <br> (Тапсырыстар тарихы)"]:::database
     end
-    style Layer3 fill:#ffffff,stroke:#333333,stroke-width:1px;
 
-    %% 4. Дерекқор деңгейі
-    subgraph Layer4 [🗄️ Дерекқор]
-        DB_Desc["🗄️ Реляциялық дерекқор <br> (Users • Products • Orders • Cart)"]
-    end
-    style Layer4 fill:#f5f5f5,stroke:#333333,stroke-width:1px;
+    %% Блоктарды мәжбүрлі түрде тігінен (вертикальді) қатарға тұрғызу
+    Presentation_Layer --> Application_Layer
+    Application_Layer --> Data_Layer
 
-    %% Прямой поток данных (Сверху вниз)
-    Layer1 -->|HTTP Request / Сұраныс жолдау| Layer2
-    Layer2 -->|Бизнес-логиканы орындау| Layer3
-    Layer3 -->|Data Query / SQL сұраныс| Layer4
+    %% Нақты функционалды байланыстар
+    Customer -->|1. Сайтқа кіреді| UI
+    Admin -->|1. Панельге кіреді| UI
+    
+    UI -->|2. Сұраныс жолдау| Auth
+    UI -->|2. Іздеу| Catalog
+    UI -->|2. Тапсырыс беру| Cart
+    UI -->|2. Басқару| AdminPanel
 
-    %% Обратный поток данных (Снизу вверх)
-    Layer4 -.->|Data Response / Жауап қайтару| Layer3
-    Layer3 -.->|Өңделген мәліметтер| Layer2
-    Layer2 -.->|HTTP Response / Нәтижені көрсету| Layer1
+    Auth -->|3. Өңдеу| DAC
+    Catalog -->|3. Өңдеу| DAC
+    Cart -->|3. Өңдеу| DAC
+    AdminPanel -->|3. Өңдеу| DAC
+    
+    Cart -.->|Хабарлау| Notify
+    
+    %% DAC компонентінен реляциялық кестелерге сұраныс жолдау
+    DAC -->|4. Query| T_Users
+    DAC -->|4. Query| T_Products
+    DAC -->|4. Query| T_Orders
+    
+    %% Кестелерден DAC-қа жауап қайтару
+    T_Users -.->|5. Response| DAC
+    T_Products -.->|5. Response| DAC
+    T_Orders -.->|5. Response| DAC
+    
+    DAC -->|6. Жауап қайтару| Auth
+    DAC -->|6. Жауап қайтару| Catalog
+    DAC -->|6. Жауап қайтару| Cart
+    DAC -->|6. Жауап қайтару| AdminPanel
+    
+    Catalog -->|7. HTTP Жауап| UI
+    Cart -->|7. HTTP Жауап| UI
+    AdminPanel -->|7. HTTP Жауап| UI
+    
+    UI -->|8. Нәтиже көрсету| Customer
+    UI -->|8. Нәтиже көрсету| Admin
 ```
-
