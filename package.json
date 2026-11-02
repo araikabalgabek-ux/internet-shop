@@ -1,0 +1,25 @@
+{
+  "name": "internet-shop",
+  "version": "1.0.0",
+  "description": "Бұл жоба интернет дүкен жүйесін модельдеуге арналған.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/araikabalgabek-ux/internet-shop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/araikabalgabek-ux/internet-shop/issues"
+  },
+  "homepage": "https://github.com/araikabalgabek-ux/internet-shop#readme",
+  "dependencies": {
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6"
+  }
+}
