@@ -27,20 +27,20 @@ app.get("/api/products/:id", async (req, res) => {
  }
 });
 
-// 3. Жаңа тауар қосу (POST sұранысы)
+// 3. Жаңа тауар қосу (POST сұранысы)
 app.post("/api/products", async (req, res) => {
  try {
-     const { name, price, quantity, category } = req.body;
-     if (!name || !price || !quantity) {
+     const { name, description, price, stock, category_id } = req.body;
+     if (!name || !price || stock === undefined) {
          return res.status(400).json({ message: "Міндетті өрістерді толтырыңыз" });
      }
      const [result] = await db.query(
-         `INSERT INTO products (name, price, quantity, category) VALUES (?, ?, ?, ?)`,
-         [name, price, quantity, category || null]
+         `INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)`,
+         [name, description || null, price, stock, category_id || null]
      );
      res.status(201).json({
          id: result.insertId,
-         name, price, quantity, category
+         name, description, price, stock, category_id
      });
  } catch (error) {
      res.status(500).json({ message: "Тауарды қосу кезінде қате кетті" });
@@ -50,13 +50,13 @@ app.post("/api/products", async (req, res) => {
 // 4. Тауар ақпаратын жаңарту (PUT сұранысы)
 app.put("/api/products/:id", async (req, res) => {
  try {
-     const { name, price, quantity, category } = req.body;
-     if (!name || !price || !quantity) {
+     const { name, description, price, stock, category_id } = req.body;
+     if (!name || !price || stock === undefined) {
          return res.status(400).json({ message: "Міндетті өрістерді толтырыңыз" });
      }
      const [result] = await db.query(
-         `UPDATE products SET name = ?, price = ?, quantity = ?, category = ? WHERE id = ?`,
-         [name, price, quantity, category || null, req.params.id]
+         `UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category_id = ? WHERE id = ?`,
+         [name, description || null, price, stock, category_id || null, req.params.id]
      );
      if (result.affectedRows === 0) {
          return res.status(404).json({ message: "Тауар табылмады" });

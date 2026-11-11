@@ -162,3 +162,20 @@ SELECT '--- 6. PRODUCT МЕН CATEGORY БАЙЛАНЫСЫ (JOIN) ---' AS '';
 SELECT products.name AS product, categories.name AS category, products.price
 FROM products
 JOIN categories ON products.category_id = categories.id;
+
+SELECT AVG(price) FROM products;
+UPDATE products SET price = 50000 WHERE id = 1;
+DELETE FROM products WHERE id = 1;
+SELECT * FROM products WHERE name LIKE '%Laptop%';
+SELECT products.name,categories.name FROM products JOIN categories ON products.category_id = categories.id;
+SELECT COUNT(*) FROM products;
+SELECT SUM(price) FROM products;
+SELECT MAX(price) FROM products;
+SELECT MIN(price) FROM products;
+SELECT category_id, COUNT(*) FROM products GROUP BY category_id HAVING COUNT(*) > 1;
+SELECT category_id, COUNT(*) FROM products GROUP BY category_id;
+SELECT * FROM products ORDER BY price DESC;
+SELECT * FROM products ORDER BY price ASC;
+SELECT DISTINCT role FROM users;
+SELECT * FROM products WHERE price > 10000; 
+ 
